@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>HomeWork</title>
+</head>
+<body>
+    <!-- 
+    1. back to top button; 
+    2. drag and drop;
+	3. создайте div, при клике на него, div начинает двигаться вправо, при клике на кнопку - останавливается,
+	при попадании div к краю окна, он переходит к началу окна.
+	-->
+	<div id="wrapper">
+		<div id="ball" style="
+		width: 90px;
+		height: 70px;
+		background: aquamarine;
+		"></div>
+		<div id="circle" style="
+		width: 100px;
+		height: 100px;
+		background: #ac3b84;
+		border-radius: 50px;
+		left: 1px;
+		position: absolute;
+		margin-top: 180px;
+		"></div>
+		<button id="stopButton" style="margin-top: 300px;">stop/on</button>
+		<div style="height: 1000px; padding-top: 900px; box-sizing: border-box;">
+			<button id="scroll" style="height: 100px;">back to top</button>
+		</div>
+	</div>
+	<script type="text/javascript">
+		window.onload = function () {
+			var back = document.getElementById("scroll");
+			var ball = document.getElementById('ball');
+			var circle = document.getElementById('circle');
+			var wrapper = document.getElementById('wrapper');
+			var stopButton = document.getElementById('stopButton');
+			var stop = false;
+			var start = Date.now();
+			back.addEventListener("click" , topFunction);
+			stopButton.addEventListener("click" , stopAnimation);
+			circle.addEventListener("click" , moveThis);
+			function topFunction() {
+			  document.body.scrollTop = 0;
+			  document.documentElement.scrollTop = 0;
+			}
+			ball.onmousedown = function(e) {
+
+			  var coords = getCoords(ball);
+			  var shiftX = e.pageX - coords.left;
+			  var shiftY = e.pageY - coords.top;
+
+			  ball.style.position = 'absolute';
+			  document.body.appendChild(ball);
+			  moveAt(e);
+
+			  ball.style.zIndex = 1000; // над другими элементами
+
+			  function moveAt(e) {
+			    ball.style.left = e.pageX - shiftX + 'px';
+			    ball.style.top = e.pageY - shiftY + 'px';
+			  }
+
+			  document.onmousemove = function(e) {
+			    moveAt(e);
+			  };
+
+			  ball.onmouseup = function() {
+			    document.onmousemove = null;
+			    ball.onmouseup = null;
+			  };
+
+			}
+
+			ball.ondragstart = function() {
+			  return false;
+			};
+
+			function getCoords(elem) {
+			  var box = elem.getBoundingClientRect();
+			  return {
+			    top: box.top + pageYOffset,
+			    left: box.left + pageXOffset
+			  };
+			}
+
+			function moveThis() {
+				if (stop) {
+					stop = false;
+				}
+				var timer = setInterval(function() {
+			  	if (parseInt(circle.style.left) > wrapper.offsetWidth) {
+			  		circle.style.left = '1px';
+			  		moveThis();
+				    clearInterval(timer);
+			  	}
+			  	draw();
+
+				}, 20);
+			}
+
+			function draw() {
+				if (stop){
+					return;
+				}
+			  	circle.style.left = (parseInt(circle.style.left) + 5) + 'px';
+			}
+
+			function stopAnimation() {
+				stop = !stop;
+			}
+		}
+	</script>
+</body>
+</html>
